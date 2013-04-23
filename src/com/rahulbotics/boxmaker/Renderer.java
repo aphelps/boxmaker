@@ -99,8 +99,8 @@ public class Renderer {
      * @throws DocumentException
      */
     private void openDoc(float widthMm,float heightMm) throws FileNotFoundException, DocumentException{
-		float docWidth = widthMm*DPI*INCH_PER_MM;
-		float docHeight = heightMm*DPI*INCH_PER_MM;
+		float docWidth = widthMm*DPI;
+		float docHeight = heightMm*DPI;
 		//System.out.println("doc = "+docWidth+" x "+docHeight);
     	doc = new Document(new Rectangle(docWidth,docHeight));
 		docPdfWriter = PdfWriter.getInstance(doc,new FileOutputStream(filePath));
@@ -125,9 +125,9 @@ public class Renderer {
         throws DocumentException {
     	drawBoxByMm(margin, margin, widthMM, heightMM);
 		if(specifiedInInches) {
-            doc.add(new Paragraph("Bounding box (in): "+widthMM*INCH_PER_MM+" x "+heightMM*INCH_PER_MM));
+            doc.add(new Paragraph("Bounding box (in): "+widthMM+" x "+heightMM));
 		} else {
-		    doc.add(new Paragraph("Bounding box (mm): "+widthMM+" x "+heightMM));
+		    doc.add(new Paragraph("Bounding box (mm): "+widthMM * MM_PER_INCH+" x "+heightMM * MM_PER_INCH));
 		}
 	}
 
@@ -189,7 +189,7 @@ public class Renderer {
 		float notchLengthD = depth / (numNotchesD);
 	
 		//and compute the new width based on that (should be a NO-OP)
-		float margin=10+cutwidth;
+		float margin= 0.5f +cutwidth;
 		width = numNotchesW*notchLengthW;
 		height = numNotchesH*notchLengthH;
 		depth = numNotchesD*notchLengthD;
@@ -199,19 +199,19 @@ public class Renderer {
 		float boxPiecesHeight = (height*2+depth*2); // based on layout of pieces
 		openDoc((float) (boxPiecesWidth+margin*4),(float) (boxPiecesHeight+margin*5));
         if(specifiedInInches) {
-            doc.add(new Paragraph("Width (in): "+width*INCH_PER_MM));
-            doc.add(new Paragraph("Height (in): "+height*INCH_PER_MM));
-            doc.add(new Paragraph("Depth (in): "+depth*INCH_PER_MM));
-            doc.add(new Paragraph("Thickness (in): "+thickness*INCH_PER_MM));
-            doc.add(new Paragraph("Notch Length (in): "+notchLength*INCH_PER_MM));
-            doc.add(new Paragraph("Cut Width (in): "+cutwidth*INCH_PER_MM));        
+            doc.add(new Paragraph("Width (in): "+width));
+            doc.add(new Paragraph("Height (in): "+height));
+            doc.add(new Paragraph("Depth (in): "+depth));
+            doc.add(new Paragraph("Thickness (in): "+thickness));
+            doc.add(new Paragraph("Notch Length (in): "+notchLength));
+            doc.add(new Paragraph("Cut Width (in): "+cutwidth));        
         } else {
-            doc.add(new Paragraph("Width (mm): "+width));
-            doc.add(new Paragraph("Height (mm): "+height));
-            doc.add(new Paragraph("Depth (mm): "+depth));
-            doc.add(new Paragraph("Thickness (mm): "+thickness));
-            doc.add(new Paragraph("Notch Length (mm): "+notchLength));
-            doc.add(new Paragraph("Cut Width (mm): "+cutwidth));        
+            doc.add(new Paragraph("Width (mm): "+width * MM_PER_INCH));
+            doc.add(new Paragraph("Height (mm): "+height * MM_PER_INCH));
+            doc.add(new Paragraph("Depth (mm): "+depth * MM_PER_INCH));
+            doc.add(new Paragraph("Thickness (mm): "+thickness * MM_PER_INCH));
+            doc.add(new Paragraph("Notch Length (mm): "+notchLength * MM_PER_INCH));
+            doc.add(new Paragraph("Cut Width (mm): "+cutwidth * MM_PER_INCH));        
         }
 		if(drawBoundingBox) drawBoundingBox(margin,boxPiecesWidth+margin*2,boxPiecesHeight+margin*3,specifiedInInches);
 
@@ -369,11 +369,11 @@ public class Renderer {
     private void drawLineByMm(float fromXmm,float fromYmm,float toXmm,float toYmm){
     	PdfContentByte cb = docPdfWriter.getDirectContent();
 		cb.setLineWidth(0f);
-		float x0 = DPI*fromXmm*INCH_PER_MM;
-		float y0 = DPI*fromYmm*INCH_PER_MM;
+		float x0 = DPI*fromXmm;
+		float y0 = DPI*fromYmm;
     	cb.moveTo(x0,y0);
-    	float x1 = DPI*toXmm*INCH_PER_MM;
-    	float y1 = DPI*toYmm*INCH_PER_MM;
+    	float x1 = DPI*toXmm;
+    	float y1 = DPI*toYmm;
     	cb.lineTo(x1, y1);
     	cb.stroke();
     	System.out.println(" Line  - ( "+x0+" , "+y0+" ) to ( "+x1+" , "+y1+" )");
@@ -389,10 +389,10 @@ public class Renderer {
     private void drawBoxByMm(float fromXmm,float fromYmm,float toXmm,float toYmm){
      	PdfContentByte cb = docPdfWriter.getDirectContent();
 		cb.setLineWidth(0f);
-		float x0 = DPI*fromXmm*INCH_PER_MM;
-		float y0 = DPI*fromYmm*INCH_PER_MM;
-    	float x1 = DPI*toXmm*INCH_PER_MM;
-    	float y1 = DPI*toYmm*INCH_PER_MM;
+		float x0 = DPI*fromXmm;
+		float y0 = DPI*fromYmm;
+    	float x1 = DPI*toXmm;
+    	float y1 = DPI*toYmm;
     	cb.rectangle(x0, y0, x1, y1);
     	cb.stroke();
     	System.out.println(" Box  - ( "+x0+" , "+y0+" ) to ( "+x1+" , "+y1+" )");

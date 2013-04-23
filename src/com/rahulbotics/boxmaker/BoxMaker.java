@@ -24,7 +24,7 @@ public class BoxMaker {
 
     boolean drawBoundingBox = false;
     boolean internalDimensions = false;
-    boolean inInches = false;
+    boolean inMetric = false;
 
     /**
      * Run the rendered with lots of args
@@ -63,14 +63,14 @@ public class BoxMaker {
             mmDepth  += mmThickness * 2;
         }
         
-        if (inInches) {
+        if (inMetric) {
             /* Convert all units from inches into millimeters */
-            mmWidth       *= Renderer.MM_PER_INCH;
-            mmHeight      *= Renderer.MM_PER_INCH;
-            mmDepth       *= Renderer.MM_PER_INCH;
-            mmThickness   *= Renderer.MM_PER_INCH;
-            mmCutWidth    *= Renderer.MM_PER_INCH;
-            mmNotchLength *= Renderer.MM_PER_INCH;
+            mmWidth       *= Renderer.INCH_PER_MM;
+            mmHeight      *= Renderer.INCH_PER_MM;
+            mmDepth       *= Renderer.INCH_PER_MM;
+            mmThickness   *= Renderer.INCH_PER_MM;
+            mmCutWidth    *= Renderer.INCH_PER_MM;
+            mmNotchLength *= Renderer.INCH_PER_MM;
         }
         
         // try to render it, don't do any error handling (file won't get created)
@@ -78,7 +78,7 @@ public class BoxMaker {
             Renderer.render(filePath,
                             mmWidth, mmHeight, mmDepth,
                             mmThickness, mmCutWidth, mmNotchLength,
-                            drawBoundingBox, inInches);
+                            drawBoundingBox, !inMetric);
         } catch (FileNotFoundException e) {
             System.out.println("ERROR!" + e.toString());
             System.exit(1);
@@ -98,8 +98,8 @@ public class BoxMaker {
 
         opts.addOption("i", "internal", false,
                        "Specified dimensions are internal");
-        opts.addOption("I", "inches", false,
-                       "Specified dimensions are in inches");
+        opts.addOption("m", "metric", false,
+                       "Specified dimensions are in millimeters");
         opts.addOption("b", "boundingbox", false,
                        "Draw bounding box");
 
@@ -144,8 +144,8 @@ public class BoxMaker {
                 internalDimensions = true;
             }
 
-            if (commandLine.hasOption("inches")) {
-                inInches = true;
+            if (commandLine.hasOption("metric")) {
+                inMetric = true;
             }
 
             if (commandLine.hasOption("boundingbox")) {
