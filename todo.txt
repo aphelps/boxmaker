@@ -1,0 +1,6 @@
+Todo
+----
+
+* Add options for creating lids
+  - Add extended tabs
+  - Reduce cut-width on tabs
