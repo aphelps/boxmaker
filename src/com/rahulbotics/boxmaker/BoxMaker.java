@@ -43,6 +43,9 @@ public class BoxMaker {
         System.exit(0);
     }
 
+    /**
+     * Construct the arguments for the actual rendering function
+     */
     private void build() {
         if (mmNotchLength == 0) {
             /* Default notch length to 2.5x material thickness */
@@ -72,18 +75,22 @@ public class BoxMaker {
         
         // try to render it, don't do any error handling (file won't get created)
         try {
-            Renderer.render(filePath,filePath,mmWidth,mmHeight,mmDepth,
-                            mmThickness,mmCutWidth,mmNotchLength,
-                            drawBoundingBox,inInches);
+            Renderer.render(filePath,
+                            mmWidth, mmHeight, mmDepth,
+                            mmThickness, mmCutWidth, mmNotchLength,
+                            drawBoundingBox, inInches);
         } catch (FileNotFoundException e) {
-            System.out.println("ERROR!"+e.toString());
+            System.out.println("ERROR!" + e.toString());
             System.exit(1);
         } catch (DocumentException e) {
-            System.out.println("ERROR!"+e.toString());
+            System.out.println("ERROR!" + e.toString());
             System.exit(1);
         }
     }
 
+    /**
+     * Generate the command line parsing options
+     */
     private Options constructOptions() {
         Options opts = new Options();
 
@@ -115,6 +122,10 @@ public class BoxMaker {
         System.exit(1);
     }
 
+         
+    /**
+     * Parse the command line options
+     */
     private boolean parseOptions(final String[] args)
     {
         final CommandLineParser parser = new GnuParser();
