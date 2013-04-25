@@ -263,13 +263,17 @@ public class Renderer {
 		drawVerticalLine(xOrig,yOrig,notchLengthH,numNotchesH,thickness,cutwidth/2,false,false);					//left
 		drawVerticalLine(xOrig+width-thickness,yOrig,notchLengthH,numNotchesH,thickness,-cutwidth/2,false,false);	//right
 		
-		//3. a W x D side (the top)
+		//6. a W x D side (the top)
 		xOrig = depth + margin*2;
 		yOrig = height*2 + depth + margin*4;
-		drawHorizontalLine(xOrig,yOrig,notchLengthW,numNotchesW,thickness,-cutwidth/2,true,true);				//top
-		drawHorizontalLine(xOrig,yOrig+depth-thickness,notchLengthW,numNotchesW,thickness,-cutwidth/2,false,true);	//bottom
-		drawVerticalLine(xOrig,yOrig,notchLengthD,numNotchesD,thickness,-cutwidth/2,true,true);				//left
-		drawVerticalLine(xOrig+width-thickness,yOrig,notchLengthD,numNotchesD,thickness,-cutwidth/2,false,true);	//right
+		drawHorizontalLine(xOrig,                 yOrig,
+                           notchLengthW, numNotchesW, thickness, -cutwidth/2, true,  true); //top
+		drawHorizontalLine(xOrig,                 yOrig+depth-thickness,
+                           notchLengthW, numNotchesW, thickness, -cutwidth/2, false, true);	//bottom
+		drawVerticalLine  (xOrig,                 yOrig,
+                           notchLengthD, numNotchesD, thickness, -cutwidth/2, true,  true); //left
+		drawVerticalLine  (xOrig+width-thickness, yOrig,
+                           notchLengthD, numNotchesD, thickness, -cutwidth/2, false, true);	//right
 
     }
 
@@ -279,26 +283,37 @@ public class Renderer {
      * @param y0			y-coord of the starting point of the line (lower left corner)
      * @param notchWidth	the width of each notch to draw in millimeters
      * @param notchCount	the number of notches to draw along the edge
-     * @param notchHieght	the height of the notches to draw (the material thickness)
+     * @param notchHeight	the height of the notches to draw (the material thickness)
      * @param cutwidth		the width of the laser beam to compensate for
      * @param flip			should the first line (at x0,y0) be out or in
      * @param smallside		should this stop short of the full height or not
      */
-    private void drawHorizontalLine(float x0,float y0, float notchWidth,
-                                    int notchCount,float notchHieght /*material tickness*/,
-                                    float cutwidth,boolean flip,boolean smallside){
-    	float x=x0,y=y0;
-    	//System.out.println(" side: "+notchCount+" steps @ ( "+x0+" , "+y0+" )");
+    private void drawHorizontalLine(float x0, float y0,
+                                    float notchWidth,
+                                    int notchCount,
+                                    float notchHeight /*material tickness*/,
+                                    float cutwidth,
+                                    boolean flip, boolean smallside){
+    	float x = x0, y = y0;
+    	System.out.println("Horizonal side: "+notchCount+" steps @ ( "+x0+" , "+y0+" )");
     	
-		for (int step=0;step<notchCount;step++)
+        boolean tabs = true;
+        int tab1 = -1, tab2 = -1;
+        if (tabs) {
+            /* Figure out which notch to extend */
+
+            
+        }
+
+        for (int step = 0; step < notchCount; step++)
         {
-			y=(((step%2)==0)^flip) ? y0 : y0+notchHieght;
+			y=(((step%2)==0)^flip) ? y0 : y0+notchHeight;
 	
 			if(step==0){		//start first edge in the right place
-			    if(smallside) drawLineByMm(x+notchHieght,y,x+notchWidth+cutwidth,y);
+			    if(smallside) drawLineByMm(x+notchHeight,y,x+notchWidth+cutwidth,y);
 			    else drawLineByMm(x,y,x+notchWidth+cutwidth,y);
 			} else if (step==(notchCount-1)){	//shorter last edge
-			    drawLineByMm(x-cutwidth,y,x+notchWidth-notchHieght,y);
+			    drawLineByMm(x-cutwidth,y,x+notchWidth-notchHeight,y);
 			} else if (step%2==0) {
 			    drawLineByMm(x-cutwidth,y,x+notchWidth+cutwidth,y);
 		    } else {
@@ -307,9 +322,9 @@ public class Renderer {
 			
 			if (step<(notchCount-1)){
 			    if (step%2==0){
-					drawLineByMm(x+notchWidth+cutwidth,y0+notchHieght,x+notchWidth+cutwidth,y0);
+					drawLineByMm(x+notchWidth+cutwidth,y0+notchHeight,x+notchWidth+cutwidth,y0);
 			    } else {
-					drawLineByMm(x+notchWidth-cutwidth,y0+notchHieght,x+notchWidth-cutwidth,y0);
+					drawLineByMm(x+notchWidth-cutwidth,y0+notchHeight,x+notchWidth-cutwidth,y0);
 			    }
 			}
 			
@@ -323,39 +338,42 @@ public class Renderer {
      * @param y0			y-coord of the starting point of the line (lower left corner)
      * @param notchWidth	the width of each notch to draw in millimeters
      * @param notchCount	the number of notches to draw along the edge
-     * @param notchHieght	the height of the notches to draw (the material thickness)
+     * @param notchHeight	the height of the notches to draw (the material thickness)
      * @param cutwidth		the width of the laser beam to compensate for
      * @param flip			should the first line (at x0,y0) be out or in
      * @param smallside		should this stop short of the full height or not
      */
-    private void drawVerticalLine(float x0,float y0, float stepLength,int numSteps,
-                                  float mlength,float cutwidth,boolean flip,boolean smallside){
+    private void drawVerticalLine(float x0, float y0,
+                                  float notchWidth, int notchCount,
+                                  float notchHeight, float cutwidth,
+                                  boolean flip, boolean smallside){
 		float x=x0,y=y0;
+        System.out.println("Vertical side: "+notchCount+" steps @ ( "+x0+" , "+y0+" )");
 	
-		for (int step=0;step<numSteps;step++) {
-			x=(((step%2)==0)^flip) ? x0 : x0+mlength;
+		for (int step=0;step<notchCount;step++) {
+			x=(((step%2)==0)^flip) ? x0 : x0+notchHeight;
 	
 			if (step==0) {
-				if(smallside) drawLineByMm(x,y+mlength,x,y+stepLength+cutwidth);
-			    else drawLineByMm(x,y,x,y+stepLength+cutwidth);
-			} else if (step==(numSteps-1)) {
-			    //g.moveTo(x,y+cutwidth); g.lineTo(x,y+stepLength); g.stroke();
-				if(smallside) drawLineByMm(x,y-cutwidth,x,y+stepLength-mlength);
-			    else drawLineByMm(x,y-cutwidth,x,y+stepLength); 
+				if(smallside) drawLineByMm(x,y+notchHeight,x,y+notchWidth+cutwidth);
+			    else drawLineByMm(x,y,x,y+notchWidth+cutwidth);
+			} else if (step==(notchCount-1)) {
+			    //g.moveTo(x,y+cutwidth); g.lineTo(x,y+notchWidth); g.stroke();
+				if(smallside) drawLineByMm(x,y-cutwidth,x,y+notchWidth-notchHeight);
+			    else drawLineByMm(x,y-cutwidth,x,y+notchWidth); 
 			} else if (step%2==0) {
-			    drawLineByMm(x,y-cutwidth,x,y+stepLength+cutwidth);
+			    drawLineByMm(x,y-cutwidth,x,y+notchWidth+cutwidth);
 			} else {
-			    drawLineByMm(x,y+cutwidth,x,y+stepLength-cutwidth);
+			    drawLineByMm(x,y+cutwidth,x,y+notchWidth-cutwidth);
 			}
 			
-			if (step<(numSteps-1)) {
+			if (step<(notchCount-1)) {
 			    if (step%2==0) {
-			    	drawLineByMm(x0+mlength,y+stepLength+cutwidth,x0,y+stepLength+cutwidth);
+			    	drawLineByMm(x0+notchHeight,y+notchWidth+cutwidth,x0,y+notchWidth+cutwidth);
 			    } else {
-			    	drawLineByMm(x0+mlength,y+stepLength-cutwidth,x0,y+stepLength-cutwidth);
+			    	drawLineByMm(x0+notchHeight,y+notchWidth-cutwidth,x0,y+notchWidth-cutwidth);
 			    }
 			}
-			y=y+stepLength;
+			y=y+notchWidth;
 		}
     }
 
