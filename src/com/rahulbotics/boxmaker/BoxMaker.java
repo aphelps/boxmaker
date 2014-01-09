@@ -6,6 +6,8 @@ import com.lowagie.text.DocumentException;
 
 import org.apache.commons.cli.*;
 
+import com.rahulbotics.boxmaker.Box;
+
 /**
  * Simple wrapper to let me run the renderer from the command line
  * @author rahulb
@@ -14,13 +16,13 @@ public class BoxMaker {
 
     String filePath = null;
 
-    double mmWidth = 0;
-    double mmHeight = 0;
-    double mmDepth = 0;
+    double width = 0;
+    double height = 0;
+    double depth = 0;
 
-    double mmThickness = 0;
-    double mmCutWidth = 0;
-    double mmNotchLength = 0;
+    double thickness = 0;
+    double kerf = 0;
+    double notchLength = 0;
 
     boolean drawBoundingBox = false;
     boolean internalDimensions = false;
@@ -47,9 +49,9 @@ public class BoxMaker {
      * Construct the arguments for the actual rendering function
      */
     private void build() {
-        if (mmNotchLength == 0) {
+        if (notchLength == 0) {
             /* Default notch length to 2.5x material thickness */
-            mmNotchLength = mmThickness * 2.5;
+            notchLength = thickness * 2.5;
         }
 
         if (internalDimensions) {
@@ -58,26 +60,28 @@ public class BoxMaker {
              * thickness to each dimension.
              */
             System.out.println("Converting from interior to exterior dimensions");
-            mmWidth  += mmThickness * 2;
-            mmHeight += mmThickness * 2;
-            mmDepth  += mmThickness * 2;
+            width  += thickness * 2;
+            height += thickness * 2;
+            depth  += thickness * 2;
         }
         
         if (inMetric) {
             /* Convert all units from inches into millimeters */
-            mmWidth       *= Renderer.INCH_PER_MM;
-            mmHeight      *= Renderer.INCH_PER_MM;
-            mmDepth       *= Renderer.INCH_PER_MM;
-            mmThickness   *= Renderer.INCH_PER_MM;
-            mmCutWidth    *= Renderer.INCH_PER_MM;
-            mmNotchLength *= Renderer.INCH_PER_MM;
+            width       *= Renderer.INCH_PER_MM;
+            height      *= Renderer.INCH_PER_MM;
+            depth       *= Renderer.INCH_PER_MM;
+            thickness   *= Renderer.INCH_PER_MM;
+            kerf    *= Renderer.INCH_PER_MM;
+            notchLength *= Renderer.INCH_PER_MM;
         }
+
+        /* Construct the box */
+        Box box = new Box(width, height, depth,
+                          thickness, kerf, notchLength);
         
         // try to render it, don't do any error handling (file won't get created)
         try {
-            Renderer.render(filePath,
-                            mmWidth, mmHeight, mmDepth,
-                            mmThickness, mmCutWidth, mmNotchLength,
+            Renderer.render(filePath, box,
                             drawBoundingBox, !inMetric);
         } catch (FileNotFoundException e) {
             System.out.println("ERROR!" + e.toString());
@@ -105,9 +109,9 @@ public class BoxMaker {
 
         opts.addOption("f", "file", true, "Output file");
 
-        opts.addOption("W", "width", true, "Width of box");
-        opts.addOption("H", "height", true, "Height of box");
-        opts.addOption("D", "depth", true, "Depth of box");
+        opts.addOption("W", "width", true, "width of box");
+        opts.addOption("H", "height", true, "height of box");
+        opts.addOption("D", "depth", true, "depth of box");
 
         opts.addOption("T", "thickness", true, "Material thickness");
         opts.addOption("k", "kerf", true, "Cut width");
@@ -160,7 +164,7 @@ public class BoxMaker {
             }
 
             if (commandLine.hasOption("width")) {
-                mmWidth =
+                width =
                     Double.parseDouble(commandLine.getOptionValue("width"));
             } else {
                 System.err.println("Must specify width");
@@ -168,7 +172,7 @@ public class BoxMaker {
             }
 
             if (commandLine.hasOption("height")) {
-                mmHeight =
+                height =
                     Double.parseDouble(commandLine.getOptionValue("height"));
             } else {
                 System.err.println("Must specify height");
@@ -176,7 +180,7 @@ public class BoxMaker {
             }
 
             if (commandLine.hasOption("depth")) {
-                mmDepth =
+                depth =
                     Double.parseDouble(commandLine.getOptionValue("depth"));
             } else {
                 System.err.println("Must specify depth");
@@ -184,7 +188,7 @@ public class BoxMaker {
             }
 
             if (commandLine.hasOption("thickness")) {
-                mmThickness =
+                thickness =
                     Double.parseDouble(commandLine.getOptionValue("thickness"));
             } else {
                 System.err.println("Must specify material thickness");
@@ -192,12 +196,12 @@ public class BoxMaker {
             }
 
             if (commandLine.hasOption("kerf")) {
-                mmCutWidth =
+                kerf =
                     Double.parseDouble(commandLine.getOptionValue("kerf"));
             }
 
             if (commandLine.hasOption("notchlength")) {
-                mmNotchLength =
+                notchLength =
                     Double.parseDouble(commandLine.getOptionValue("notchlength"));
             }
 
