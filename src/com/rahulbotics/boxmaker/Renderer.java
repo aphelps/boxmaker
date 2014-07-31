@@ -238,9 +238,6 @@ public class Renderer {
 		drawHorizontalLine(box, xOrig,                     yOrig + box.depth - box.thickness, box.notchLengthW, box.numNotchesW, -box.kerf/2, false, true, true);	//bottom
 		drawVerticalLine  (box, xOrig,                     yOrig,                     box.notchLengthD, box.numNotchesD, -box.kerf/2, true,  true); //left
 		drawVerticalLine  (box, xOrig + box.width - box.thickness, yOrig,                     box.notchLengthD, box.numNotchesD, -box.kerf/2, false, true);	//right
-
-        yOrig += box.thickness * 2;
-        drawNotchedLine(box, xOrig,                     yOrig + box.depth - box.thickness, box.notchLengthW, box.numNotchesW, -box.kerf/2, false, true, true);	//bottom
     }
 
     private void drawNotchedLine(Box box,
